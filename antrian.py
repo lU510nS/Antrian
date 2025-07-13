@@ -1,24 +1,31 @@
 import streamlit as st
-from PIL import Image
-import os
 
 # Judul aplikasi
-st.title("📊 Model Antrian M/M/1 - PT. Barokah")
+st.title("Model Antrian PT. Barokah")
 
-# Menampilkan gambar jika ada
-image_path = "gambar.png"
-if os.path.exists(image_path):
-    image = Image.open(image_path)
-    st.image(image, caption="Ilustrasi Antrian", use_container_width=True)
+st.markdown("""
+Aplikasi ini menghitung parameter antrian berdasarkan model **M/M/1**  
+dengan asumsi:  
+- Kedatangan pelanggan mengikuti distribusi **Poisson**  
+- Waktu pelayanan mengikuti distribusi **Eksponensial**
+""")
 
-st.markdown("## 📌 Input Parameter")
+# Input dari user
+λ = st.number_input("Rata-rata kedatangan pelanggan per jam (λ)", min_value=1.0, value=15.0)
+μ = st.number_input("Rata-rata pelayanan pelanggan per jam (μ)", min_value=1.0, value=20.0)
 
-# Input user
-λ = st.number_input("Tingkat kedatangan (λ - pelanggan/jam)", value=15)
-μ = st.number_input("Tingkat pelayanan (μ - pelanggan/jam)", value=20)
-
-if λ >= μ:
-    st.error("⚠️ Sistem tidak stabil! Pastikan λ < μ")
+if μ <= λ:
+    st.error("Laju pelayanan (μ) harus lebih besar dari laju kedatangan (λ) agar sistem stabil.")
 else:
+    # Perhitungan model M/M/1
     ρ = λ / μ
     L = λ / (μ - λ)
+    W = 1 / (μ - λ)
+    Wq = λ / (μ * (μ - λ))
+
+    # Tampilkan hasil
+    st.subheader("Hasil Perhitungan:")
+    st.write(f"Tingkat utilisasi server (ρ): {ρ:.2f} atau {ρ*100:.1f}%")
+    st.write(f"Rata-rata jumlah pelanggan dalam sistem (L): {L:.2f} orang")
+    st.write(f"Rata-rata waktu dalam sistem (W): {W:.2f} jam atau {W*60:.0f} menit")
+    st.write(f"Rata-rata waktu menunggu dalam antrean (Wq): {Wq:.2f} jam atau {Wq*60:.0f} menit")
