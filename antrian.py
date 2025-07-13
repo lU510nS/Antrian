@@ -1,4 +1,8 @@
 import streamlit as st
+from PIL import Image
+
+# Tampilkan gambar diagram
+st.image("mm1_queue_diagram.png", caption="Diagram Antrian M/M/1", use_column_width=True)
 
 # Judul aplikasi
 st.title("Model Antrian PT. Barokah")
